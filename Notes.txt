@@ -1,0 +1,13 @@
+Wemos Lolin32 ESP32 OLED Overview
+The WeMos Lolin32 OLED is a development board with ESP32 and built-in 0.96 inch 128×64 I2C OLED display.
+
+Button closest to the usb connector is for programming. Hold the button when VSCode shows Connecting...
+
+https://randomnerdtutorials.com/esp32-built-in-oled-ssd1306/
+
+The OLED display communicates with the ESP32 using I2C communication protocol. It uses the following pins for SDA/SCL:
+SDA	GPIO 5
+SCL	GPIO 4
+
+The Adafruit libraries use GPIO 22 and GPIO 21 as default I2C pins, but you can change the pins just by adding two lines of code.
+In the setup(), you need to start an I2C communication using GPIO 5 and GPIO 4. So, you need to add the following line:
