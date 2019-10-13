@@ -83,7 +83,10 @@ static const uint8_t image_data_Saraarray[1024] = {
  
 void setup() {
   Serial.begin(115200);
-  
+    Serial.begin(115200);
+    Serial.print("Sketch is called: ");
+    Serial.println("Face.cpp");
+    // Start time
   // Start I2C Communication SDA = 5 and SCL = 4 on Wemos Lolin32 ESP32 with built-in SSD1306 OLED
   Wire.begin(5, 4);
 

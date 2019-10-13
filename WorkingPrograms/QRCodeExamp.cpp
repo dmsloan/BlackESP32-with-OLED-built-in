@@ -9,18 +9,21 @@
  *
  */
 
+
+#include <Arduino.h>
 #include "qrcode.h"
 
 void setup() {
     Serial.begin(115200);
-
+    Serial.print("Sketch is called: ");
+    Serial.println("QRCodeExamp.cpp");
     // Start time
     uint32_t dt = millis();
   
     // Create the QR code
     QRCode qrcode;
     uint8_t qrcodeData[qrcode_getBufferSize(3)];
-    qrcode_initText(&qrcode, qrcodeData, 3, 0, "HELLO WORLD");
+    qrcode_initText(&qrcode, qrcodeData, 3, 0, "I love you Sam");
   
     // Delta time
     dt = millis() - dt;

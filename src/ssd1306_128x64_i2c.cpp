@@ -1,3 +1,4 @@
+#include <Arduino.h>
 /**************************************************************************
  This is an example for our Monochrome OLEDs based on SSD1306 drivers
 
@@ -22,9 +23,10 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "splashibe.h"
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 32 // OLED display height, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -32,6 +34,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define NUMFLAKES     10 // Number of snowflakes in the animation example
 
+// the following is a small star that is udes as snowflakes in the animation example
 #define LOGO_HEIGHT   16
 #define LOGO_WIDTH    16
 static const unsigned char PROGMEM logo_bmp[] =
@@ -52,72 +55,6 @@ static const unsigned char PROGMEM logo_bmp[] =
   B01110000, B01110000,
   B00000000, B00110000 };
 
-void setup() {
-  Serial.begin(9600);
-
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
-  }
-
-  // Show initial display buffer contents on the screen --
-  // the library initializes this with an Adafruit splash screen.
-  display.display();
-  delay(2000); // Pause for 2 seconds
-
-  // Clear the buffer
-  display.clearDisplay();
-
-  // Draw a single pixel in white
-  display.drawPixel(10, 10, WHITE);
-
-  // Show the display buffer on the screen. You MUST call display() after
-  // drawing commands to make them visible on screen!
-  display.display();
-  delay(2000);
-  // display.display() is NOT necessary after every single drawing command,
-  // unless that's what you want...rather, you can batch up a bunch of
-  // drawing operations and then update the screen all at once by calling
-  // display.display(). These examples demonstrate both approaches...
-
-  testdrawline();      // Draw many lines
-
-  testdrawrect();      // Draw rectangles (outlines)
-
-  testfillrect();      // Draw rectangles (filled)
-
-  testdrawcircle();    // Draw circles (outlines)
-
-  testfillcircle();    // Draw circles (filled)
-
-  testdrawroundrect(); // Draw rounded rectangles (outlines)
-
-  testfillroundrect(); // Draw rounded rectangles (filled)
-
-  testdrawtriangle();  // Draw triangles (outlines)
-
-  testfilltriangle();  // Draw triangles (filled)
-
-  testdrawchar();      // Draw characters of the default font
-
-  testdrawstyles();    // Draw 'stylized' characters
-
-  testscrolltext();    // Draw scrolling text
-
-  testdrawbitmap();    // Draw a small bitmap image
-
-  // Invert and restore display, pausing in-between
-  display.invertDisplay(true);
-  delay(1000);
-  display.invertDisplay(false);
-  delay(1000);
-
-  testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
-}
-
-void loop() {
-}
 
 void testdrawline() {
   int16_t i;
@@ -363,6 +300,16 @@ void testdrawbitmap(void) {
   display.display();
   delay(1000);
 }
+void testdrawibe(void) {
+  display.clearDisplay();
+
+  display.drawBitmap(
+    (display.width()  - splash_ibe_width ) / 2,
+    (display.height() - splash_ibe_height) / 2,
+    splash_ibe_data, splash_ibe_width, splash_ibe_height, 1);
+  display.display();
+  delay(1000);
+}
 
 #define XPOS   0 // Indexes into the 'icons' array in function below
 #define YPOS   1
@@ -407,4 +354,79 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
       }
     }
   }
+}
+void setup() {
+  Serial.begin(115200); // changed from 9600
+  Serial.print("Sketch is called: ");
+  Serial.println("ssd1306_128x64_i2c.cpp");
+    // Start time
+  Wire.begin(5, 4); // had to add for the board
+
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32 this is for the 128x64 also
+//  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3D)) { // Address 0x3D for 128x64 this was wrong
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+
+  // Show adafruit_ssd1306nitial display buffer contents on the screen --
+  // the library initializes this with an Adafruit splash screen.
+  display.display();
+  delay(2000); // Pause for 2 seconds
+
+  // Clear the buffer
+  display.clearDisplay();
+
+  // Draw a single pixel in white
+  display.drawPixel(10, 10, WHITE);
+
+  // Show the display buffer on the screen. You MUST call display() after
+  // drawing commands to make them visible on screen!
+  display.display();
+  delay(2000);
+  // display.display() is NOT necessary after every single drawing command,
+  // unless that's what you want...rather, you can batch up a bunch of
+  // drawing operations and then update the screen all at once by calling
+  // display.display(). These examples demonstrate both approaches...
+  testdrawibe();    // Draw the ibe logo
+
+  testdrawline();      // Draw many lines
+
+  testdrawrect();      // Draw rectangles (outlines)
+
+  testdrawbitmap();    // Draw a small bitmap image
+
+  testfillrect();      // Draw rectangles (filled)
+
+  testdrawcircle();    // Draw circles (outlines)
+
+  testfillcircle();    // Draw circles (filled)
+
+  testdrawroundrect(); // Draw rounded rectangles (outlines)
+
+  testfillroundrect(); // Draw rounded rectangles (filled)
+
+  testdrawtriangle();  // Draw triangles (outlines)
+
+  testfilltriangle();  // Draw triangles (filled)
+
+  testdrawchar();      // Draw characters of the default font
+
+  testdrawstyles();    // Draw 'stylized' characters
+
+  testscrolltext();    // Draw scrolling text
+
+  testdrawbitmap();    // Draw a small bitmap image
+
+  // Invert and restore display, pausing in-between
+  display.invertDisplay(true);
+  delay(1000);
+  display.invertDisplay(false);
+  delay(1000);
+
+  testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
+}
+
+void loop() {
 }
